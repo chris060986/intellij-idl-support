@@ -23,6 +23,7 @@
     -->
 
     <extensions defaultExtensionNs="com.intellij">
+        <fileTypeFactory implementation="com.bich.idl.file.IdlFileTypeFactory"/>
     </extensions>
 
     <actions>
