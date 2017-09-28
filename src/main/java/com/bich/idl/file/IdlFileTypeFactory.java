@@ -9,6 +9,6 @@ public class IdlFileTypeFactory extends FileTypeFactory {
 
     @Override
     public void createFileTypes(@NotNull FileTypeConsumer fileTypeConsumer) {
-        fileTypeConsumer.consume(IdlFileType.INSTANCE, "simple");
+        fileTypeConsumer.consume(IdlFileType.INSTANCE, "idl");
     }
 }

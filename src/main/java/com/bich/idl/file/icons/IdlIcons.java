@@ -6,5 +6,5 @@ import javax.swing.*;
 
 public class IdlIcons {
 
-    public static final Icon DEFAULT_ICON = IconLoader.getIcon("/idl-Icon.png");
+    public static final Icon DEFAULT_ICON = IconLoader.getIcon("/icons/idl-x-small.png");
 }

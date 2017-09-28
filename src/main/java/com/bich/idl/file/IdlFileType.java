@@ -19,7 +19,7 @@ public class IdlFileType extends LanguageFileType {
     @NotNull
     @Override
     public String getName() {
-        return "simple";
+        return "idl";
     }
 
     @NotNull
@@ -31,7 +31,7 @@ public class IdlFileType extends LanguageFileType {
     @NotNull
     @Override
     public String getDefaultExtension() {
-        return "simple";
+        return "idl";
     }
 
     @Nullable
