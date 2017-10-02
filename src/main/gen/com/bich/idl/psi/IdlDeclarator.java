@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface IdlDeclarator extends PsiElement {
 
   @NotNull
+  IdlBaseTypeSpec getBaseTypeSpec();
+
+  @NotNull
   IdlSimpleDeclarator getSimpleDeclarator();
 
 }

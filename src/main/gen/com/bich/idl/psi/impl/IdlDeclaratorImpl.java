@@ -28,6 +28,12 @@ public class IdlDeclaratorImpl extends ASTWrapperPsiElement implements IdlDeclar
 
   @Override
   @NotNull
+  public IdlBaseTypeSpec getBaseTypeSpec() {
+    return findNotNullChildByClass(IdlBaseTypeSpec.class);
+  }
+
+  @Override
+  @NotNull
   public IdlSimpleDeclarator getSimpleDeclarator() {
     return findNotNullChildByClass(IdlSimpleDeclarator.class);
   }
