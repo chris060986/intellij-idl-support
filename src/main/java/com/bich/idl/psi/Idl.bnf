@@ -81,6 +81,9 @@
                       | <wide_char_type>
                       | <boolean_type>
                       | <octet_type>
+                      | <any_type>
+                      | <object_type>
+                      | <value_base_type>
    <floating_pt_type> ::= "float"
                         | "double"
                         | "long" "double"
@@ -153,7 +156,6 @@
                       | <array_declarator>
    <declarators> ::= <declarator> { "," <declarator> }*
    <declarator> ::= <simple_declarator>
-   <base_type_spec> ::+ <any_type>
    <any_type> ::= "any"
    <definition> ::+ <except_dcl> ";"
                   | <interface_dcl> ";"
@@ -223,7 +225,6 @@
    <type_prefix_dcl> ::= "typeprefix" <scoped_name> <string_literal>
    <import_dcl> ::= "import" <imported_scope>
    <imported_scope> ::= <scoped_name> | <string_literal>
-   <base_type_spec> ::+ <object_type>
    <object_type> ::= "Object"
    <interface_kind> ::+ "local" "interface"
    <op_oneway_dcl> ::= "oneway" "void" <identifier> "(" [ <in_parameter_dcls> ] ")"
@@ -240,7 +241,6 @@
    <interface_kind> ::+ "abstract" "interface"
    <value_inheritance_spec> ::+ ":" ["truncatable"] <value_name> { "," <value_name> }*
    [ "supports" <interface_name> { "," <interface_name> }* ]
-   <base_type_spec> ::+ <value_base_type>
    <value_base_type> ::= "ValueBase"
    <definition> ::+ <component_dcl> ";"
    <component_dcl> ::= <component_def>
