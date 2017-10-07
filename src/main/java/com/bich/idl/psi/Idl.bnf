@@ -180,6 +180,8 @@
    <interface_header> ::= <interface_kind> <identifier>
    [ <interface_inheritance_spec> ]
    <interface_kind> ::= "interface"
+                      | "local" "interface"
+                      | "abstract" "interface"
    <interface_inheritance_spec> ::= ":" <interface_name> { "," <interface_name> }*
    <interface_name> ::= <scoped_name>
    <interface_body> ::= <export>*
@@ -217,6 +219,8 @@
    <exception_list> ::= "(" <scoped_name> { "," <scoped_name> } * ")"
    <value_dcl> ::= <value_def>
                  | <value_forward_dcl>
+                 | <value_box_def>
+                 | <value_abs_def>
    <value_def> ::= <value_header> "{" <value_element>* "}"
    <value_header> ::= <value_kind> <identifier> [ <value_inheritance_spec> ]
    <value_kind> ::= "valuetype"
@@ -235,19 +239,15 @@
    <import_dcl> ::= "import" <imported_scope>
    <imported_scope> ::= <scoped_name> | <string_literal>
    <object_type> ::= "Object"
-   <interface_kind> ::+ "local" "interface"
    <op_oneway_dcl> ::= "oneway" "void" <identifier> "(" [ <in_parameter_dcls> ] ")"
    <in_parameter_dcls> ::= <in_param_dcl> { "," <in_param_dcl> } *
    <in_param_dcl> ::= "in" <type_spec> <simple_declarator>
    <op_with_context> ::= {<op_dcl> | <op_oneway_dcl>} <context_expr>
    <context_expr> ::= "context" "(" <string_literal> { "," <string_literal>* } ")"
-   <value_dcl> ::+ <value_box_def>
-                 | <value_abs_def>
    <value_box_def> ::= "valuetype" <identifier> <type_spec>
    <value_abs_def> ::= "abstract" "valuetype" <identifier> [ <value_inheritance_spec> ]
    "{" <export>* "}"
    <value_kind> ::+ "custom" "valuetype"
-   <interface_kind> ::+ "abstract" "interface"
    <value_inheritance_spec> ::+ ":" ["truncatable"] <value_name> { "," <value_name> }*
    [ "supports" <interface_name> { "," <interface_name> }* ]
    <value_base_type> ::= "ValueBase"
