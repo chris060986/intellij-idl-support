@@ -88,6 +88,7 @@
                 | <native_dcl>
                 | <typedef_dcl>
    <type_spec> ::= <simple_type_spec>
+                 | <template_type_spec>
    <simple_type_spec> ::= <base_type_spec>
                        | <scoped_name>
    <base_type_spec> ::= <integer_type>
@@ -124,6 +125,7 @@
                           | <string_type>
                           | <wide_string_type>
                           | <fixed_pt_type>
+                          | <map_type>
    <sequence_type> ::= "sequence" "<" <type_spec> "," <positive_int_const> ">"
                      | "sequence" "<" <type_spec> ">"
    <string_type> ::= "string" "<" <positive_int_const> ">"
@@ -135,19 +137,25 @@
    <constr_type_dcl> ::= <struct_dcl>
                        | <union_dcl>
                        | <enum_dcl>
+                       | <bitset_dcl>
+                       | <bitmask_dcl>
    <struct_dcl> ::= <struct_def>
                   | <struct_forward_dcl>
    <struct_def> ::= "struct" <identifier> "{" <member>+ "}"
+                  | "struct" <identifier> ":" <scoped_name> "{" <member>* "}"
+                  | "struct" <identifier> "{" "}"
    <member> ::= <type_spec> <declarators> ";"
    <struct_forward_dcl> ::= "struct" <identifier>
    <union_dcl> ::= <union_def>
                  | <union_forward_dcl>
    <union_def> ::= "union" <identifier> "switch" "(" <switch_type_spec> ")"
-  "{" <switch_body> "}"
+                    "{" <switch_body> "}"
    <switch_type_spec> ::= <integer_type>
                         | <char_type>
                         | <boolean_type>
                         | <scoped_name>
+                        | <wide_char_type>
+                        | <octet_type>
    <switch_body> ::= <case>+
    <case> ::= <case_label>+ <element_spec> ";"
    <case_label> ::= "case" <const_expr> ":"
@@ -155,7 +163,7 @@
    <element_spec> ::= <type_spec> <declarator>
    <union_forward_dcl> ::= "union" <identifier>
    <enum_dcl> ::= "enum" <identifier>
-   "{" <enumerator> { "," <enumerator> } * "}"
+                   "{" <enumerator> { "," <enumerator> } * "}"
    <enumerator> ::= <identifier>
    <array_declarator> ::= <identifier> <fixed_array_size>+
    <fixed_array_size> ::= "[" <positive_int_const> "]"
@@ -171,14 +179,14 @@
                       | <array_declarator>
    <declarators> ::= <declarator> { "," <declarator> }*
    <declarator> ::= <simple_declarator>
+                  | <array_declarator>
    <any_type> ::= "any"
    <except_dcl> ::= "exception" <identifier> "{" <member>* "}"
    <interface_dcl> ::= <interface_def>
                      | <interface_forward_dcl>
    <interface_def> ::= <interface_header> "{" <interface_body> "}"
    <interface_forward_dcl> ::= <interface_kind> <identifier>
-   <interface_header> ::= <interface_kind> <identifier>
-   [ <interface_inheritance_spec> ]
+   <interface_header> ::= <interface_kind> <identifier>[ <interface_inheritance_spec> ]
    <interface_kind> ::= "interface"
                       | "local" "interface"
                       | "abstract" "interface"
@@ -227,6 +235,7 @@
                   | "custom" "valuetype"
    <value_inheritance_spec> ::= [ ":" <value_name> ] [ "supports" <interface_name> ]
                                 | ":" ["truncatable"] <value_name> { "," <value_name> }*
+                                    [ "supports" <interface_name> { "," <interface_name> }* ]
    <value_name> ::= <scoped_name>
    <value_element> ::= <export>
                      | <state_member>
@@ -247,16 +256,13 @@
    <op_with_context> ::= {<op_dcl> | <op_oneway_dcl>} <context_expr>
    <context_expr> ::= "context" "(" <string_literal> { "," <string_literal>* } ")"
    <value_box_def> ::= "valuetype" <identifier> <type_spec>
-   <value_abs_def> ::= "abstract" "valuetype" <identifier> [ <value_inheritance_spec> ]
-   "{" <export>* "}"
-   [ "supports" <interface_name> { "," <interface_name> }* ]
+   <value_abs_def> ::= "abstract" "valuetype" <identifier> [ <value_inheritance_spec> ]"{" <export>* "}"
    <value_base_type> ::= "ValueBase"
    <component_dcl> ::= <component_def>
                      | <component_forward_dcl>
    <component_forward_dcl> ::= "component" <identifier>
    <component_def> ::= <component_header> "{" <component_body> "}"
    <component_header> ::= "component" <identifier> [ <component_inheritance_spec> ]
-                        | "component" <identifier> [ <component_inheritance_spec> ]
    <component_inheritance_spec> ::= ":" <scoped_name>
    <component_body> ::= <component_export>*
    <component_export> ::= <provides_dcl> ";"
@@ -268,36 +274,33 @@
                         | <port_dcl> ";"
    <provides_dcl> ::= "provides" <interface_type> <identifier>
    <interface_type> ::= <scoped_name>
+                      | "Object"
    <uses_dcl> ::= "uses" <interface_type> <identifier>
+                | "uses" "multiple" <interface_type> <identifier>
    <home_dcl> ::= <home_header> "{" <home_body> "}"
    <home_header> ::= "home" <identifier> [ <home_inheritance_spec> ]
+                   | "home" <identifier> [ <home_inheritance_spec> ][ <supported_interface_spec> ]"manages" <scoped_name> [ <primary_key_spec> ]
    "manages" <scoped_name>
    <home_inheritance_spec> ::= ":" <scoped_name>
    <home_body> ::= <home_export>*
    <home_export> ::= <export>
                    | <factory_dcl> ";"
+                   | <finder_dcl> ";"
    <factory_dcl> ::= "factory" <identifier> "(" [ <factory_param_dcls> ] ")" [ <raises_expr> ]
    <factory_param_dcls> ::= <factory_param_dcl> {"," <factory_param_dcl>}*
    <factory_param_dcl> ::= "in" <type_spec> <simple_declarator>
    <supported_interface_spec>
    <supported_interface_spec> ::= "supports" <scoped_name> { "," <scoped_name> }*
-   <interface_type> ::+ "Object"
-   <uses_dcl> ::+ "uses" "multiple" <interface_type> <identifier>
    <emits_dcl> ::= "emits" <scoped_name> <identifier>
    <publishes_dcl> ::= "publishes" <scoped_name> <identifier>
    <consumes_dcl> ::= "consumes" <scoped_name> <identifier>
-   <home_header> ::+ "home" <identifier> [ <home_inheritance_spec> ]
-   [ <supported_interface_spec> ]
-   "manages" <scoped_name> [ <primary_key_spec> ]
    <primary_key_spec> ::= "primarykey" <scoped_name>
-   <home_export> ::+ <finder_dcl> ";"
    <finder_dcl> ::= "finder" <identifier> "(" [ <init_param_dcls> ] ")" [ <raises_expr> ]
    <event_dcl> ::= ( <event_def>
                    | <event_abs_def>
                    | <event_forward_dcl> )
    <event_forward_dcl> ::= [ "abstract" ] "eventtype" <identifier>
-   <event_abs_def> ::= "abstract" "eventtype" <identifier> [ <value_inheritance_spec> ]
-   "{" <export>* "}"
+   <event_abs_def> ::= "abstract" "eventtype" <identifier> [ <value_inheritance_spec> ] "{" <export>* "}"
    <event_def> ::= <event_header> "{" <value_element> * "}"
    <event_header> ::= [ "custom" ] "eventtype" <identifier> [ <value_inheritance_spec> ]
    <porttype_dcl> ::= <porttype_def>
@@ -316,51 +319,40 @@
    <connector_inherit_spec> ::= ":" <scoped_name>
    <connector_export> ::= <port_ref>
                         | <attr_dcl> ";"
- <template_module_dcl> ::= "module" <identifier> "<" <formal_parameters> ">"
- "{" <tpl_definition> +"}"
- <formal_parameters> ::= <formal_parameter> {"," <formal_parameter>}*
- <formal_parameter> ::= <formal_parameter_type> <identifier>
- <formal_parameter_type> ::= "typename" | "interface" | "valuetype" | "eventtype"
-                           | "struct" | "union" | "exception" | "enum" | "sequence"
-                           | "const" <const_type>
-                           | <sequence_type>
- <tpl_definition> ::= <definition>
-                    | <template_module_ref> ";"
- <template_module_inst> ::= "module" <scoped_name> "<" <actual_parameters> ">" <identifier>
- <actual_parameters> ::= <actual_parameter> { "," <actual_parameter>}*
- <actual_parameter> ::= <type_spec>
-                      | <const_expr>
- <template_module_ref> ::= "alias" <scoped_name> "<" <formal_parameter_names> ">" <identifier>
- <formal_parameter_names> ::= <identifier> { "," <identifier>}*
- <struct_def> ::+ "struct" <identifier> ":" <scoped_name> "{" <member>* "}"
-                | "struct" <identifier> "{" "}"
- <switch_type_spec> ::+ <wide_char_type>
-                      | <octet_type>
- <template_type_spec> ::+ <map_type>
- <constr_type_dcl> ::+ <bitset_dcl>
-                     | <bitmask_dcl>
- <map_type> ::= "map" "<" <type_spec> "," <type_spec> "," <positive_int_const> ">"
-              | "map" "<" <type_spec> "," <type_spec> ">"
- <bitset_dcl> ::= "bitset" <identifier> [":" <scoped_name>] "{" <bitfield>* "}"
- <bitfield> ::= <bitfield_spec> <identifier>* ";"
- <bitfield_spec> ::= "bitfield" "<" <positive_int_const> ">"
-                   | "bitfield" "<" <positive_int_const> "," <destination_type> ">"
- <destination_type> ::= <boolean_type> | <octet_type> | <integer_type>
- <bitmask_dcl> ::= "bitmask" <identifier> "{" <bit_value> { "," <bit_value> }* "}"
- <bit_value> ::= <identifier>
- <type_spec> ::+ <template_type_spec>
- <declarator> ::+ <array_declarator>
- <annotation_dcl> ::= <annotation_header> "{" <annotation_body> "}"
- <annotation_header> ::= "@annotation" <identifier>
- <annotation_body> ::= { <annotation_member>
-                       | <enum_dcl> ";"
-                       | <const_dcl> ";"
-                       | <typedef_dcl> ";" }*
- <annotation_member> ::= <annotation_member_type> <simple_declarator>
- [ "default" <const_expr> ] ";"
- <annotation_member_type> ::= <const_type> | <any_const_type> | <scoped_name>
- <any_const_type> ::= "any"
- <annotation_appl> ::= "@" <scoped_name> [ "(" <annotation_appl_params> ")" ]
- <annotation_appl_params> ::= <const_expr>
-                            | <annotation_appl_param> { "," <annotation_appl_param> }*
- <annotation_appl_param> ::= <identifier> "=" <const_expr>
+   <template_module_dcl> ::= "module" <identifier> "<" <formal_parameters> ">" "{" <tpl_definition> +"}"
+   <formal_parameters> ::= <formal_parameter> {"," <formal_parameter>}*
+   <formal_parameter> ::= <formal_parameter_type> <identifier>
+   <formal_parameter_type> ::= "typename" | "interface" | "valuetype" | "eventtype"
+                             | "struct" | "union" | "exception" | "enum" | "sequence"
+                             | "const" <const_type>
+                             | <sequence_type>
+   <tpl_definition> ::= <definition>
+                      | <template_module_ref> ";"
+   <template_module_inst> ::= "module" <scoped_name> "<" <actual_parameters> ">" <identifier>
+   <actual_parameters> ::= <actual_parameter> { "," <actual_parameter>}*
+   <actual_parameter> ::= <type_spec>
+                        | <const_expr>
+   <template_module_ref> ::= "alias" <scoped_name> "<" <formal_parameter_names> ">" <identifier>
+   <formal_parameter_names> ::= <identifier> { "," <identifier>}*
+   <map_type> ::= "map" "<" <type_spec> "," <type_spec> "," <positive_int_const> ">"
+                | "map" "<" <type_spec> "," <type_spec> ">"
+   <bitset_dcl> ::= "bitset" <identifier> [":" <scoped_name>] "{" <bitfield>* "}"
+   <bitfield> ::= <bitfield_spec> <identifier>* ";"
+   <bitfield_spec> ::= "bitfield" "<" <positive_int_const> ">"
+                     | "bitfield" "<" <positive_int_const> "," <destination_type> ">"
+   <destination_type> ::= <boolean_type> | <octet_type> | <integer_type>
+   <bitmask_dcl> ::= "bitmask" <identifier> "{" <bit_value> { "," <bit_value> }* "}"
+   <bit_value> ::= <identifier>
+   <annotation_dcl> ::= <annotation_header> "{" <annotation_body> "}"
+   <annotation_header> ::= "@annotation" <identifier>
+   <annotation_body> ::= { <annotation_member>
+                         | <enum_dcl> ";"
+                         | <const_dcl> ";"
+                         | <typedef_dcl> ";" }*
+   <annotation_member> ::= <annotation_member_type> <simple_declarator>[ "default" <const_expr> ] ";"
+   <annotation_member_type> ::= <const_type> | <any_const_type> | <scoped_name>
+   <any_const_type> ::= "any"
+   <annotation_appl> ::= "@" <scoped_name> [ "(" <annotation_appl_params> ")" ]
+   <annotation_appl_params> ::= <const_expr>
+                              | <annotation_appl_param> { "," <annotation_appl_param> }*
+   <annotation_appl_param> ::= <identifier> "=" <const_expr>
