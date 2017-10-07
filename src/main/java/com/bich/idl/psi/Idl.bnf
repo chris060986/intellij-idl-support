@@ -224,7 +224,9 @@
    <value_def> ::= <value_header> "{" <value_element>* "}"
    <value_header> ::= <value_kind> <identifier> [ <value_inheritance_spec> ]
    <value_kind> ::= "valuetype"
+                  | "custom" "valuetype"
    <value_inheritance_spec> ::= [ ":" <value_name> ] [ "supports" <interface_name> ]
+                                | ":" ["truncatable"] <value_name> { "," <value_name> }*
    <value_name> ::= <scoped_name>
    <value_element> ::= <export>
                      | <state_member>
@@ -247,8 +249,6 @@
    <value_box_def> ::= "valuetype" <identifier> <type_spec>
    <value_abs_def> ::= "abstract" "valuetype" <identifier> [ <value_inheritance_spec> ]
    "{" <export>* "}"
-   <value_kind> ::+ "custom" "valuetype"
-   <value_inheritance_spec> ::+ ":" ["truncatable"] <value_name> { "," <value_name> }*
    [ "supports" <interface_name> { "," <interface_name> }* ]
    <value_base_type> ::= "ValueBase"
    <component_dcl> ::= <component_def>
