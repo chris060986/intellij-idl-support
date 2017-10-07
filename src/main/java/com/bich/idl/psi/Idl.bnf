@@ -256,11 +256,16 @@
    <component_forward_dcl> ::= "component" <identifier>
    <component_def> ::= <component_header> "{" <component_body> "}"
    <component_header> ::= "component" <identifier> [ <component_inheritance_spec> ]
+                        | "component" <identifier> [ <component_inheritance_spec> ]
    <component_inheritance_spec> ::= ":" <scoped_name>
    <component_body> ::= <component_export>*
    <component_export> ::= <provides_dcl> ";"
                         | <uses_dcl> ";"
                         | <attr_dcl> ";"
+                        | <emits_dcl> ";"
+                        | <publishes_dcl> ";"
+                        | <consumes_dcl> ";"
+                        | <port_dcl> ";"
    <provides_dcl> ::= "provides" <interface_type> <identifier>
    <interface_type> ::= <scoped_name>
    <uses_dcl> ::= "uses" <interface_type> <identifier>
@@ -274,12 +279,8 @@
    <factory_dcl> ::= "factory" <identifier> "(" [ <factory_param_dcls> ] ")" [ <raises_expr> ]
    <factory_param_dcls> ::= <factory_param_dcl> {"," <factory_param_dcl>}*
    <factory_param_dcl> ::= "in" <type_spec> <simple_declarator>
-   <component_header> ::+ "component" <identifier> [ <component_inheritance_spec> ]
    <supported_interface_spec>
    <supported_interface_spec> ::= "supports" <scoped_name> { "," <scoped_name> }*
-   <component_export> ::+ <emits_dcl> ";"
-                        | <publishes_dcl> ";"
-                        | <consumes_dcl> ";"
    <interface_type> ::+ "Object"
    <uses_dcl> ::+ "uses" "multiple" <interface_type> <identifier>
    <emits_dcl> ::= "emits" <scoped_name> <identifier>
@@ -310,7 +311,6 @@
    <port_export> ::= <port_ref>
                    | <attr_dcl> ";"
    <port_dcl> ::= {"port" | "mirrorport"} <scoped_name> <identifier>
-   <component_export> ::+ <port_dcl> ";"
    <connector_dcl> ::= <connector_header> "{" <connector_export>+ "}"
    <connector_header> ::= "connector" <identifier> [ <connector_inherit_spec> ]
    <connector_inherit_spec> ::= ":" <scoped_name>
