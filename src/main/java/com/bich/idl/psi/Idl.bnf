@@ -18,6 +18,21 @@
    <definition> ::= <module_dcl> ";"
                   | <const_dcl> ";"
                   | <type_dcl> ";"
+                  | <except_dcl> ";"
+                  | <interface_dcl> ";"
+                  | <value_dcl> ";"
+                  | <type_id_dcl> ";"
+                  | <type_prefix_dcl> ";"
+                  | <import_dcl> ";"
+                  | <component_dcl> ";"
+                  | <home_dcl> ";"
+                  | <event_dcl> ";"
+                  | <porttype_dcl> ";"
+                  | <connector_dcl> ";"
+                  | <template_module_dcl> ";"
+                  | <template_module_inst> ";"
+                  | <annotation_dcl> " ;"
+
    <module_dcl> ::= "module" <identifier> "{" <definition>+ "}"
    <scoped_name> ::= <identifier>
               | "::" <identifier>
@@ -157,8 +172,6 @@
    <declarators> ::= <declarator> { "," <declarator> }*
    <declarator> ::= <simple_declarator>
    <any_type> ::= "any"
-   <definition> ::+ <except_dcl> ";"
-                  | <interface_dcl> ";"
    <except_dcl> ::= "exception" <identifier> "{" <member>* "}"
    <interface_dcl> ::= <interface_def>
                      | <interface_forward_dcl>
@@ -172,6 +185,14 @@
    <interface_body> ::= <export>*
    <export> ::= <op_dcl> ";"
               | <attr_dcl> ";"
+              | <type_dcl> ";"
+              | <const_dcl> ";"
+              | <except_dcl> ";"
+              | <type_id_dcl> ";"
+              | <type_prefix_dcl> ";"
+              | <import_dcl> ";"
+              | <op_oneway_dcl> ";"
+              | <op_with_context> ";"
    <op_dcl> ::= <op_type_spec> <identifier> "(" [ <parameter_dcls> ] ")" [ <raises_expr> ]
    <op_type_spec> ::= <type_spec>
                     | "void"
@@ -194,10 +215,6 @@
    <get_excep_expr> ::= "getraises" <exception_list>
    <set_excep_expr> ::= "setraises" <exception_list>
    <exception_list> ::= "(" <scoped_name> { "," <scoped_name> } * ")"
-   <export> ::+ <type_dcl> ";"
-              | <const_dcl> ";"
-              | <except_dcl> ";"
-   <definition> ::+ <value_dcl> ";"
    <value_dcl> ::= <value_def>
                  | <value_forward_dcl>
    <value_def> ::= <value_header> "{" <value_element>* "}"
@@ -213,14 +230,6 @@
    <init_param_dcls> ::= <init_param_dcl> { "," <init_param_dcl>}*
    <init_param_dcl> ::= "in" <type_spec> <simple_declarator>
    <value_forward_dcl> ::= <value_kind> <identifier>
-   <definition> ::+ <type_id_dcl> ";"
-                  | <type_prefix_dcl> ";"
-                  | <import_dcl> ";"
-   <export> ::+ <type_id_dcl> ";"
-              | <type_prefix_dcl> ";"
-              | <import_dcl> ";"
-              | <op_oneway_dcl> ";"
-              | <op_with_context> ";"
    <type_id_dcl> ::= "typeid" <scoped_name> <string_literal>
    <type_prefix_dcl> ::= "typeprefix" <scoped_name> <string_literal>
    <import_dcl> ::= "import" <imported_scope>
@@ -242,7 +251,6 @@
    <value_inheritance_spec> ::+ ":" ["truncatable"] <value_name> { "," <value_name> }*
    [ "supports" <interface_name> { "," <interface_name> }* ]
    <value_base_type> ::= "ValueBase"
-   <definition> ::+ <component_dcl> ";"
    <component_dcl> ::= <component_def>
                      | <component_forward_dcl>
    <component_forward_dcl> ::= "component" <identifier>
@@ -256,7 +264,6 @@
    <provides_dcl> ::= "provides" <interface_type> <identifier>
    <interface_type> ::= <scoped_name>
    <uses_dcl> ::= "uses" <interface_type> <identifier>
-   <definition> ::+ <home_dcl> ";"
    <home_dcl> ::= <home_header> "{" <home_body> "}"
    <home_header> ::= "home" <identifier> [ <home_inheritance_spec> ]
    "manages" <scoped_name>
@@ -267,7 +274,6 @@
    <factory_dcl> ::= "factory" <identifier> "(" [ <factory_param_dcls> ] ")" [ <raises_expr> ]
    <factory_param_dcls> ::= <factory_param_dcl> {"," <factory_param_dcl>}*
    <factory_param_dcl> ::= "in" <type_spec> <simple_declarator>
-   <definition> ::+ <event_dcl> ";"
    <component_header> ::+ "component" <identifier> [ <component_inheritance_spec> ]
    <supported_interface_spec>
    <supported_interface_spec> ::= "supports" <scoped_name> { "," <scoped_name> }*
@@ -293,8 +299,6 @@
    "{" <export>* "}"
    <event_def> ::= <event_header> "{" <value_element> * "}"
    <event_header> ::= [ "custom" ] "eventtype" <identifier> [ <value_inheritance_spec> ]
-   <definition> ::+ <porttype_dcl> ";"
-                  | <connector_dcl> ";"
    <porttype_dcl> ::= <porttype_def>
                     | <porttype_forward_dcl>
    <porttype_forward_dcl> ::= "porttype" <identifier>
@@ -312,8 +316,6 @@
    <connector_inherit_spec> ::= ":" <scoped_name>
    <connector_export> ::= <port_ref>
                         | <attr_dcl> ";"
- <definition> ::+ <template_module_dcl> ";"
-                | <template_module_inst> ";"
  <template_module_dcl> ::= "module" <identifier> "<" <formal_parameters> ">"
  "{" <tpl_definition> +"}"
  <formal_parameters> ::= <formal_parameter> {"," <formal_parameter>}*
@@ -348,7 +350,6 @@
  <bit_value> ::= <identifier>
  <type_spec> ::+ <template_type_spec>
  <declarator> ::+ <array_declarator>
- <definition> ::+ <annotation_dcl> " ;"
  <annotation_dcl> ::= <annotation_header> "{" <annotation_body> "}"
  <annotation_header> ::= "@annotation" <identifier>
  <annotation_body> ::= { <annotation_member>
